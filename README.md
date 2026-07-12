@@ -1,77 +1,58 @@
 # MeetNow
 
-MeetNow is a full-stack video meeting application built with React, Node.js, Express, MongoDB, Socket.IO, and WebRTC. It lets users register, log in, join meetings with a code, chat in real time, share their screen, and review their meeting history.
+MeetNow is a full-stack real-time room chat application built with React, Vite, Express, and Socket.IO. Users join a room by URL, enter a display name, and chat instantly with everyone connected to that room.
 
-## Features
+## What This Project Currently Does
 
-- User registration and login
-- Protected home page for authenticated users
-- Join meetings using a meeting code
-- Guest-friendly room access through direct room URLs
-- Real-time audio/video communication with WebRTC
-- In-meeting chat powered by Socket.IO
-- Screen sharing support
-- Meeting history stored in MongoDB
+- Join a chat room based on the current route, such as `/team-room`
+- Enter a username before connecting
+- Send and receive live messages with Socket.IO
+- Show typing indicators for other participants
+- Keep in-memory room message history while the server is running
+- Support multiple rooms at the same time
 
 ## Tech Stack
 
-**Frontend**
+### Frontend
 
 - React 19
 - Vite
-- React Router
 - Material UI
 - Socket.IO Client
+- Tailwind CSS
 
-**Backend**
+### Backend
 
 - Node.js
 - Express
-- MongoDB with Mongoose
 - Socket.IO
-- bcrypt
-
-**Infrastructure**
-
-- Docker
-- Docker Compose
 
 ## Project Structure
 
 ```text
-MeetNow/
-├── MeetNow-frontend/    # React + Vite client
-├── MeetNow-backend/     # Express + Socket.IO API
+MeetNow (Copy)/
+├── MeetNow-frontend/   # React client
+├── MeetNow-backend/    # Express + Socket.IO server
 ├── docker-compose.yml
 └── README.md
 ```
 
 ## How It Works
 
-1. Users register or log in from the frontend.
-2. The backend stores user records and generates a token on login.
-3. Authenticated users can join a room from the home screen using a meeting code.
-4. Guests can also enter a room directly through a room URL.
-5. Socket.IO handles room signaling and chat events.
-6. WebRTC handles peer-to-peer media streaming between participants.
-7. Joined meeting codes are saved in MongoDB and shown in the history page.
+1. The frontend reads the current browser path and treats it as the room ID.
+2. A user enters a name and joins that room through Socket.IO.
+3. The backend stores active socket connections by room in memory.
+4. Messages are broadcast to everyone in the same room.
+5. Typing and disconnect events are also shared with the room.
 
-## Getting Started
+## Local Development
 
 ### Prerequisites
 
-- Node.js 20+ recommended
+- Node.js 18 or newer
 - npm
-- MongoDB Atlas or a local MongoDB instance
 
-### 1. Clone the repository
-
-```bash
-git clone <your-repo-url>
-cd MeetNow
-```
-
-### 2. Install dependencies
+### 1. Install dependencies
 
 ```bash
 cd MeetNow-backend
@@ -83,108 +64,97 @@ cd ../MeetNow-frontend
 npm install
 ```
 
-### 3. Configure the backend
-
-Create a `.env` file inside `MeetNow-backend`:
-
-```env
-PORT=8000
-MONGODB_URI=<your-mongodb-uri>
-```
-
-Important note:
-The current backend source still contains a hardcoded MongoDB connection in `MeetNow-backend/src/app.js`. Replace that value with your own URI before running the project outside a trusted local setup.
-
-### 4. Configure the frontend API target
-
-Open `MeetNow-frontend/src/environment.js` and switch the app to local mode for full local development:
-
-```js
-let IS_PROD = false;
-```
-
-That makes the frontend use:
-
-```text
-http://localhost:8000
-```
-
-### 5. Run the backend
+### 2. Start the backend
 
 ```bash
 cd MeetNow-backend
 npm run dev
 ```
 
-### 6. Run the frontend
+The backend runs on:
+
+```text
+http://localhost:8000
+```
+
+### 3. Start the frontend
 
 ```bash
 cd MeetNow-frontend
 npm run dev
 ```
 
-### 7. Open the app
-
-Visit:
+The frontend runs on:
 
 ```text
 http://localhost:5173
 ```
 
-## Running with Docker
+### 4. Open a room
 
-Build and start all services:
+Visit any route in the browser, for example:
+
+```text
+http://localhost:5173/general
+```
+
+Open the same URL in another tab or browser window to test real-time chat.
+
+## Environment Behavior
+
+The frontend server URL is defined in [MeetNow-frontend/src/environment.js](/home/altaf/Downloads/Mern_projects/MeetNow%20%28Copy%29/MeetNow-frontend/src/environment.js).
+
+- In development, it connects to `http://localhost:8000`
+- In production builds, it connects to `https://apnacollegebackend.onrender.com`
+
+## Docker
+
+You can also run the project with Docker:
 
 ```bash
 docker compose up --build
 ```
 
-Docker services included:
+### Current Docker Notes
 
-- `frontend`
-- `backend`
-- `mongo`
+- The frontend container is configured for Vite on port `5173`
+- The backend application listens on port `8000`
+- The committed `docker-compose.yml` maps backend port `5000:5000`, which does not match the server's actual port
 
-Docker note:
-The backend application listens on port `8000`, but the committed `docker-compose.yml` maps `5000:5000`. If you want to access the backend from the host machine, update that mapping to `8000:8000`.
+If you want Docker access to the backend from your host machine, update the backend port mapping in [docker-compose.yml](/home/altaf/Downloads/Mern_projects/MeetNow%20%28Copy%29/docker-compose.yml) to:
 
-## API Endpoints
-
-Base URL:
-
-```text
-/api/v1/users
+```yaml
+ports:
+  - "8000:8000"
 ```
 
-Available routes:
+## Socket Events
 
-- `POST /register` - create a new user
-- `POST /login` - authenticate and receive a token
-- `POST /add_to_activity` - save a meeting code to user history
-- `GET /get_all_activity` - fetch meeting history using the stored token
+The backend currently handles these Socket.IO events:
 
-## Key Frontend Routes
-
-- `/` - landing page
-- `/auth` - login and registration
-- `/home` - authenticated meeting entry page
-- `/history` - meeting history
-- `/:url` - video meeting room
+- `join-call`
+- `chat-message`
+- `typing`
+- `stop-typing`
+- `signal`
+- `disconnect`
 
 ## Current Limitations
 
-- Authentication uses a custom token flow instead of JWT or session-based auth.
-- The frontend environment switch is hardcoded in `src/environment.js`.
-- No TURN server is configured, so connectivity may be limited on stricter networks.
-- Backend configuration is only partially environment-driven in the current source.
+- This repo currently implements chat, not full video calling in the active frontend
+- Room data and messages are stored only in server memory
+- Messages are lost when the backend restarts
+- There is no authentication or database persistence in the current app flow
+- The backend includes a `signal` event, but the current frontend does not implement WebRTC media calling
 
-## Future Improvements
+## Possible Improvements
 
-- Move all secrets and connection settings fully into environment variables
-- Add JWT-based authentication and route protection on the backend
-- Add meeting creation instead of relying only on manual room codes
-- Add participant names, invite links, and better room management
-- Add tests and CI
+- Add persistent message storage with MongoDB
+- Add room creation and invite sharing
+- Add authentication and user sessions
+- Connect the existing signaling flow to a real audio/video meeting UI
+- Fix Docker backend port mapping
+- Add tests for frontend and backend behavior
 
 ## License
 
