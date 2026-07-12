@@ -1,32 +1,43 @@
 import express from "express";
-import {createServer} from "node:http";
-import { Server } from "socket.io";
-import mongoose from "mongoose";
-import cors from "cors";
+import { createServer } from "node:http";
 import { connectToSocket } from "./controllers/socketmanager.js";
-import userRoutes from "./routes/users.routes.js";
 
-
-const app= express();
+const app = express();
 const server = createServer(app);
-const io = new Server(server);
 
-
-app.set("port",(process.env.PORT || 8000))
-app.use(cors());
-app.use(express.json({limit:"40kb"}));
-app.use(express.urlencoded({limit:"40kb",extended:true}));
-
-app.use("/api/v1/users",userRoutes);
+app.set("port", process.env.PORT || 8000);
 
 connectToSocket(server);
 
-const start = async() =>{
-    const connectionDb = await mongoose.connect("mongodb+srv://raazaltaf009:JpeoJPhDTadftBQM@cluster0.e80olyn.mongodb.net/")
-    console.log(`mongodb connected DB Host: ${connectionDb.connection.host}`)
-    server.listen(app.get("port"),() =>{
-        console.log("listening on port 8000")
+// handle server errors (e.g. port already in use)
+server.on('error', (err) => {
+    if (err && err.code === 'EADDRINUSE') {
+        console.error(`Port ${app.get('port')} is already in use`);
+        process.exit(1);
+    }
+    console.error('Server error:', err);
+    process.exit(1);
+});
+
+server.listen(app.get("port"), () => {
+    console.log(`Chat server listening on port ${app.get("port")}`);
+});
+
+// graceful shutdown to ensure port is freed on restarts
+function gracefulShutdown(signal) {
+    console.log(`Received ${signal}. Closing server...`);
+    server.close(() => {
+        console.log('Server closed');
+        process.exit(0);
     });
-    
-};start();
+    // force exit if close doesn't complete in time
+    setTimeout(() => {
+        console.error('Could not close connections in time, forcefully exiting');
+        process.exit(1);
+    }, 5000);
+}
+
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGUSR2', () => gracefulShutdown('SIGUSR2'));
 

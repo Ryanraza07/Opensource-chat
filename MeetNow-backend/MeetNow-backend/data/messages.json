@@ -1,0 +1,35 @@
+{
+  "/": {
+    "dcc53397-bbdb-4ceb-8b4d-c3b1cc118623": {
+      "id": "dcc53397-bbdb-4ceb-8b4d-c3b1cc118623",
+      "sender": "hello",
+      "data": "ldkhj fd",
+      "timestamp": "2026-07-12T06:47:17.075Z",
+      "delivered": [
+        "rHnk_wAyXYPZG8meAAAF"
+      ],
+      "read": [
+        "SKv3fupiEIYckFt5AAAF",
+        "d8BPzbEN1rvFpsXNAAAF",
+        "EzF7rXr5YoN2tqwfAAAB",
+        "CAHMaX95mtCOR2BuAAAD",
+        "vA1lEOyK_arhIzmVAAAB",
+        "BrRbQTlSoODEsdWwAAAB",
+        "bE_xSMx7u0conTWQAAAD",
+        "MK_B2_c5A92mBJjzAAAF"
+      ]
+    },
+    "74564287-975b-45b3-b3ec-301617e18de2": {
+      "id": "74564287-975b-45b3-b3ec-301617e18de2",
+      "sender": "lkjhg",
+      "data": ";llkjh",
+      "timestamp": "2026-07-12T07:16:01.030Z",
+      "delivered": [
+        "bE_xSMx7u0conTWQAAAD"
+      ],
+      "read": [
+        "MK_B2_c5A92mBJjzAAAF"
+      ]
+    }
+  }
+}

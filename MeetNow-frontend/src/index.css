@@ -104,3 +104,86 @@ font-size: 1.5rem;
   gap: 10vh;
   justify-content: center;
 }
+
+/* Chat UI styles */
+body {
+  background: radial-gradient(circle at 10% 20%, #ffd1dc 0%, rgba(255,209,220,0.0) 20%),
+              radial-gradient(circle at 90% 80%, #c7f9ff 0%, rgba(199,249,255,0.0) 20%),
+              linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  color: #0b1020;
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.MuiPaper-root {
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+}
+
+.chat-root {
+  max-width: 800px;
+  margin: 40px auto;
+}
+
+/* Make list items look like chat bubbles */
+.MuiListItem-root {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.MuiListItemText-root .MuiListItemText-primary {
+  word-wrap: break-word;
+}
+
+@media (max-width: 600px) {
+  body { padding: 8px; }
+}
+
+/* Playful shapes */
+.playful-shape {
+  position: fixed;
+  z-index: 0;
+  filter: blur(40px);
+  opacity: 0.35;
+  pointer-events: none;
+}
+.shape-1 { width: 260px; height: 260px; left: -40px; top: -20px; background: #ffd1dc; border-radius: 40% 60% 50% 50%; }
+.shape-2 { width: 320px; height: 320px; right: -80px; bottom: -60px; background: #c7f9ff; border-radius: 50% 40% 60% 50%; }
+
+/* Chat bubbles */
+.bubble {
+  display: inline-block;
+  max-width: 70%;
+  padding: 10px 14px;
+  border-radius: 18px;
+  box-shadow: 0 6px 18px rgba(10, 10, 10, 0.12);
+  transform-origin: center;
+  animation: pop 220ms ease;
+}
+.bubble.me {
+  background: linear-gradient(135deg, #ffd1dc, #ffefc2);
+  color: #111;
+  border-bottom-right-radius: 6px;
+}
+.bubble.other {
+  background: linear-gradient(135deg, #c7f9ff, #e0d7ff);
+  color: #111;
+  border-bottom-left-radius: 6px;
+}
+
+@keyframes pop {
+  from { transform: scale(0.96); opacity: 0.0 }
+  to { transform: scale(1); opacity: 1 }
+}
+
+/* Input style tweaks */
+.MuiInputBase-root {
+  background: rgba(255,255,255,0.9);
+  border-radius: 12px;
+}
+
+.MuiAppBar-root {
+  background: linear-gradient(90deg,#ff7ab6 0%,#7dd3fc 50%,#b39cff 100%);
+}
+
+.MuiAvatar-root {
+  font-weight: 700;
+}
